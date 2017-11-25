@@ -1,9 +1,0 @@
-{
-	"ImportPath": "github.com/RailwayTickets/backend-go",
-	"GoVersion": "go1.9",
-	"GodepVersion": "v79",
-	"Packages": [
-		"./..."
-	],
-	"Deps": []
-}
