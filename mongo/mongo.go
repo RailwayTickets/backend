@@ -33,22 +33,41 @@ func connectToMongo(connectionURL, dbName string) (*mgo.Database, error) {
 func init() {
 	mongoURL, ok := os.LookupEnv(mongoURLEnv)
 	if !ok {
-		log.Fatalf("pleasem specify %s variable", mongoURLEnv)
+		log.Fatalf("please, specify %s variable", mongoURLEnv)
 	}
 	dbName, ok := os.LookupEnv(dbNameEnv)
 	if !ok {
-		log.Fatalf("pleasem specify %s variable", dbName)
+		log.Fatalf("please, specify %s variable", dbNameEnv)
 	}
 	db, err := connectToMongo(mongoURL, dbName)
 	if err != nil {
 		log.Fatal(err)
 	}
 	users = db.C("users")
+	userIDIndex := mgo.Index{
+		Name:   "userID_index",
+		Key:    []string{"id"},
+		Unique: true,
+	}
+	err = users.EnsureIndex(userIDIndex)
+	if err != nil {
+		log.Fatal(err)
+	}
+	userLoginIndex := mgo.Index{
+		Name:   "user_login_index",
+		Key:    []string{"login"},
+		Unique: true,
+	}
+	err = users.EnsureIndex(userLoginIndex)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	tokens = db.C("tokens")
 	tokenIndex := mgo.Index{
-		Name: "token_index",
-		Key:  []string{"token"},
+		Name:   "token_index",
+		Key:    []string{"token"},
+		Unique: true,
 	}
 	err = tokens.EnsureIndex(tokenIndex)
 	if err != nil {

@@ -1,0 +1,36 @@
+package entity
+
+import (
+	"errors"
+	"time"
+)
+
+// TokenInfo holds information about user and his token
+type TokenInfo struct {
+	Token   string    `bson:"token" json:"token"`
+	Expires time.Time `bson:"expires" json:"expires"`
+	UserID  string    `bson:"userID" json:"userID"`
+}
+
+func (ti *TokenInfo) checkToken() error {
+	if ti.Token == "" {
+		return errors.New("token cannot be empty")
+	}
+	return nil
+}
+
+// Validate validates all fields
+func (ti *TokenInfo) Validate() error {
+	if err := ti.checkToken(); err != nil {
+		return err
+	}
+	if ti.UserID == "" {
+		return errors.New("userID cannot be empty")
+	}
+	return nil
+}
+
+// ValidateTokenOnly validates only token
+func (ti *TokenInfo) ValidateTokenOnly() error {
+	return ti.checkToken()
+}

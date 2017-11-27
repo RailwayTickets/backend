@@ -69,6 +69,25 @@ func FilterOptions(handler http.Handler) http.Handler {
 	})
 }
 
+// RequiredPost is a wrapper that filters out any non post requests
+func RequiredPost(handler http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			return
+		}
+		handler.ServeHTTP(w, r)
+	})
+}
+
+// SetContentTypeJSON is a wrapper that set response content type to json
+func SetContentTypeJSON(handler http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		handler.ServeHTTP(w, r)
+	})
+}
+
 // CheckAndUpdateToken is a wrapper that checks and updates token
 func CheckAndUpdateToken(handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
