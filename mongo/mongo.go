@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	mongoURLEnv = "MONGO_URL"
+	mongoURLEnv = "MONGODB_URI"
 	dbNameEnv   = "DB_NAME"
 )
 
