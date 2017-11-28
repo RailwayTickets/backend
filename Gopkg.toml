@@ -22,6 +22,7 @@
 
 [metadata.heroku]
   root-package = "/github.com/RailwayTickets/backend-go"
+  go-version = "go1.9.2"
   install = [ "./..." ]
 
 [[constraint]]
