@@ -51,7 +51,7 @@ func init() {
 	}
 	err = users.EnsureIndex(userLoginIndex)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 
 	tokens = db.C("tokens")
@@ -62,6 +62,6 @@ func init() {
 	}
 	err = tokens.EnsureIndex(tokenIndex)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 }
