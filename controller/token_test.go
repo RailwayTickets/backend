@@ -16,19 +16,10 @@ func TestNew(t *testing.T) {
 	os.Setenv(tokenTTLEnv, realTTL)
 }
 
-func TestInsertToken(t *testing.T) {
-	mc, _ := newTokenController()
-	err := mc.Insert(&entity.TokenInfo{
-		Token:  "test",
-		UserID: 0,
-	})
-	assert.NoError(t, err)
-}
-
-func TestRemoveToken(t *testing.T) {
+func TestInsertAndRemoveToken(t *testing.T) {
 	tokenInfo := &entity.TokenInfo{
-		Token:  "test",
-		UserID: 0,
+		Token: "TestInsertAndRemoveToken",
+		Login: "asas",
 	}
 	mc, _ := newTokenController()
 	assert.NoError(t, mc.Insert(tokenInfo))
@@ -37,24 +28,22 @@ func TestRemoveToken(t *testing.T) {
 
 func TestGetInfoByToken(t *testing.T) {
 	tokenInfo := &entity.TokenInfo{
-		Token:      "testSuperToken",
-		UserID:     1,
-		CompanyURL: "qwe",
+		Token: "TestGetInfoByToken",
+		Login: "asas",
 	}
 	mc, _ := newTokenController()
 	mc.Insert(tokenInfo)
 	ti, err := mc.GetInfo(tokenInfo.Token)
 	assert.NoError(t, err)
 	assert.Equal(t, ti.Token, tokenInfo.Token)
-	assert.Equal(t, ti.UserID, tokenInfo.UserID)
-	assert.Equal(t, ti.CompanyURL, tokenInfo.CompanyURL)
+	assert.Equal(t, ti.Login, tokenInfo.Login)
 	assert.NoError(t, mc.Remove(tokenInfo.Token))
 }
 
 func TestUpdateTokenTTL(t *testing.T) {
 	tokenInfo := &entity.TokenInfo{
-		Token:  "test",
-		UserID: 0,
+		Token: "TestUpdateTokenTTL",
+		Login: "asas",
 	}
 	mc, _ := newTokenController()
 	assert.NoError(t, mc.Insert(tokenInfo))

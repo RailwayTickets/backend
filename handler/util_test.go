@@ -1,11 +1,9 @@
 package handler
 
 import (
-	"net/http"
 	"net/http/httptest"
 	"testing"
 
-	"github.com/RailwayTickets/backend-go/entity"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -48,17 +46,4 @@ func TestFormWWWRedirectURL(t *testing.T) {
 			assert.Equal(t, result, tc.expectedResult)
 		})
 	}
-}
-
-func TestSetTokenInfoHeaders(t *testing.T) {
-	ti := &entity.TokenInfo{UserID: 666, CompanyURL: "unet", Role: "user", CompanyID: 0}
-	expectedHeaders := http.Header(map[string][]string{
-		http.CanonicalHeaderKey("df-userID"):     {"666"},
-		http.CanonicalHeaderKey("df-companyURL"): {"unet"},
-		http.CanonicalHeaderKey("df-role"):       {"user"},
-		http.CanonicalHeaderKey("df-companyID"):  {"0"},
-	})
-	r := httptest.NewRequest("", "localhost:8080", nil)
-	setTokenInfoHeaders(r.Header, ti)
-	assert.Equal(t, expectedHeaders, r.Header)
 }

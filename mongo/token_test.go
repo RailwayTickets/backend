@@ -11,12 +11,9 @@ import (
 
 func TestTokenCRUD(t *testing.T) {
 	ti := entity.TokenInfo{
-		Token:      "lala",
-		Expires:    time.Now(),
-		UserID:     0,
-		CompanyURL: "",
-		CompanyID:  0,
-		Role:       "",
+		Token:   "lala",
+		Expires: time.Now(),
+		Login:   "asas",
 	}
 	err := Token.Add(&ti)
 	assert.NoError(t, err, "unexpected error on add")

@@ -19,7 +19,7 @@ const (
 	eTagHeaderName         = "ETag"
 	ifNoneMatchHeaderName  = "If-None-Match"
 	cacheControlHeaderName = "Cache-Control"
-	tokenHeaderName        = "auth-token"
+	tokenHeaderName        = "token"
 )
 
 // NoCache is a wrapper that adds 'Cache-Control: no-cache' header in response
@@ -102,7 +102,6 @@ func CheckAndUpdateToken(handler http.Handler) http.Handler {
 			return
 		}
 		controller.Token.UpdateTTL(ti)
-		setTokenInfoHeaders(r.Header, ti)
 		handler.ServeHTTP(w, r)
 	})
 }

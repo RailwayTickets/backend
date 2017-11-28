@@ -3,8 +3,6 @@ package controller
 import (
 	"time"
 
-	"crypto/rand"
-
 	"fmt"
 
 	"errors"
@@ -20,17 +18,14 @@ func Register(info *entity.RegistrationInfo) (*entity.LoginCredentials, error) {
 		Login:    info.Login,
 		Password: string(passwordHash),
 	}
-	id := make([]byte, 25)
-	rand.Read(id)
-	user.ID = fmt.Sprintf("%x", id)
 	if err := mongo.User.Add(user); err != nil {
 		return nil, err
 	}
 	token, _ := bcrypt.GenerateFromPassword([]byte(time.Now().String()), bcrypt.DefaultCost)
 	creds := &entity.LoginCredentials{
 		TokenInfo: entity.TokenInfo{
-			Token:  string(token),
-			UserID: user.ID,
+			Token: string(token),
+			Login: user.Login,
 		},
 	}
 	return creds, Token.Insert(&creds.TokenInfo)
@@ -51,8 +46,8 @@ func Login(info *entity.LoginInfo) (*entity.LoginCredentials, error) {
 	token, _ := bcrypt.GenerateFromPassword([]byte(time.Now().String()), bcrypt.DefaultCost)
 	creds := &entity.LoginCredentials{
 		TokenInfo: entity.TokenInfo{
-			Token:  string(token),
-			UserID: user.ID,
+			Token: string(token),
+			Login: user.Login,
 		},
 	}
 	return creds, Token.Insert(&creds.TokenInfo)

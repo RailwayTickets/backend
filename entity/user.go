@@ -3,7 +3,6 @@ package entity
 import "errors"
 
 type User struct {
-	ID       string `bson:"id"`
 	Login    string `bson:"login"`
 	Password string `bson:"password"`
 }

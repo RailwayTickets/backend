@@ -9,7 +9,7 @@ import (
 type TokenInfo struct {
 	Token   string    `bson:"token" json:"token"`
 	Expires time.Time `bson:"expires" json:"expires"`
-	UserID  string    `bson:"userID" json:"userID"`
+	Login   string    `bson:"login" json:"login"`
 }
 
 func (ti *TokenInfo) checkToken() error {
@@ -24,8 +24,8 @@ func (ti *TokenInfo) Validate() error {
 	if err := ti.checkToken(); err != nil {
 		return err
 	}
-	if ti.UserID == "" {
-		return errors.New("userID cannot be empty")
+	if ti.Login == "" {
+		return errors.New("login cannot be empty")
 	}
 	return nil
 }

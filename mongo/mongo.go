@@ -44,15 +44,6 @@ func init() {
 		log.Fatal(err)
 	}
 	users = db.C("users")
-	userIDIndex := mgo.Index{
-		Name:   "userID_index",
-		Key:    []string{"id"},
-		Unique: true,
-	}
-	err = users.EnsureIndex(userIDIndex)
-	if err != nil {
-		log.Fatal(err)
-	}
 	userLoginIndex := mgo.Index{
 		Name:   "user_login_index",
 		Key:    []string{"login"},

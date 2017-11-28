@@ -316,7 +316,7 @@ func TestCheckAndUpdateToken(t *testing.T) {
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
 			req := httptest.NewRequest("GET", "http://localhost:8080/", nil)
-			req.Header.Set("df-token", tc.token)
+			req.Header.Set("token", tc.token)
 			rec := httptest.NewRecorder()
 			handler.ServeHTTP(rec, req)
 			res := rec.Result()
