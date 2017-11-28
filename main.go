@@ -6,6 +6,8 @@ import (
 	"log"
 	"net/http"
 
+	"os"
+
 	"github.com/RailwayTickets/backend-go/controller"
 	"github.com/RailwayTickets/backend-go/entity"
 	h "github.com/RailwayTickets/backend-go/handler"
@@ -19,7 +21,11 @@ func main() {
 	http.Handle("/login", h.Chain(http.HandlerFunc(loginHandler),
 		h.SetContentTypeJSON,
 		h.RequiredPost))
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
 
 func registerHandler(w http.ResponseWriter, r *http.Request) {
