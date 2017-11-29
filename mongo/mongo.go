@@ -13,11 +13,12 @@ const (
 )
 
 var (
-	// User is used for interaction with users collection and method separation
 	User  = user{}
 	users *mgo.Collection
 
-	// Token is used for interaction with token collection and method separation
+	Tickets = ticket{}
+	tickets *mgo.Collection
+
 	Token  = token{}
 	tokens *mgo.Collection
 )
@@ -44,24 +45,35 @@ func init() {
 		log.Fatal(err)
 	}
 	users = db.C("users")
-	userLoginIndex := mgo.Index{
-		Name:   "user_login_index",
-		Key:    []string{"login"},
-		Unique: true,
+	tokens = db.C("tokens")
+	tickets = db.C("tickets")
+	indexes := []struct {
+		index      mgo.Index
+		collection *mgo.Collection
+	}{
+		{
+			index: mgo.Index{
+				Name:   "token_index",
+				Key:    []string{"token"},
+				Unique: true,
+			},
+			collection: tokens,
+		},
+		{
+			index: mgo.Index{
+				Name:   "user_login_index",
+				Key:    []string{"login"},
+				Unique: true,
+			},
+			collection: users,
+		},
 	}
-	err = users.EnsureIndex(userLoginIndex)
-	if err != nil {
-		log.Fatal(err)
+	for i := range indexes {
+		col := indexes[i].collection
+		err := col.EnsureIndex(indexes[i].index)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
-	tokens = db.C("tokens")
-	tokenIndex := mgo.Index{
-		Name:   "token_index",
-		Key:    []string{"token"},
-		Unique: true,
-	}
-	err = tokens.EnsureIndex(tokenIndex)
-	if err != nil {
-		log.Fatal(err)
-	}
 }
