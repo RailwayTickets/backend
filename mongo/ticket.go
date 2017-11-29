@@ -20,9 +20,17 @@ func (ticket) Search(params *entity.TicketSearchParams) ([]entity.Ticket, error)
 	}
 	departure := time.Time(params.Date)
 	if !departure.IsZero() {
-		query["departure"] = bson.M{
-			"$gte": departure,
-			"$lte": departure.Add(time.Hour * 24),
+		query["$and"] = []bson.M{
+			{
+				"departure": bson.M{
+					"$gte": departure,
+				},
+			},
+			{
+				"departure": bson.M{
+					"$lte": departure.Add(time.Hour * 24),
+				},
+			},
 		}
 	}
 	err := tickets.Find(query).All(&found)
