@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-
 	"os"
 
 	"github.com/RailwayTickets/backend-go/controller"
@@ -21,6 +20,10 @@ func main() {
 	http.Handle("/login", h.Chain(http.HandlerFunc(loginHandler),
 		h.SetContentTypeJSON,
 		h.RequiredPost))
+	http.Handle("/search", h.Chain(http.HandlerFunc(searchHandler),
+		h.SetContentTypeJSON,
+		h.RequiredPost))
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
@@ -64,6 +67,21 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	json.NewEncoder(w).Encode(creds)
+}
+
+func searchHandler(w http.ResponseWriter, r *http.Request) {
+	query := new(entity.TicketSearchParams)
+	err := json.NewDecoder(r.Body).Decode(query)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	tickets, err := controller.Search(query)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	json.NewEncoder(w).Encode(tickets)
 }
 
 func hello(w http.ResponseWriter, r *http.Request) {
