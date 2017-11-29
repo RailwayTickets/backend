@@ -1,6 +1,6 @@
-##Backend API:
+## Backend API:
 
-#/register
+# /register
 POST
 Request JSON body contains:
     - *login (string)
@@ -9,7 +9,7 @@ Response JSON body contains:
     - token (string)
     - expires (datetime string in ISO8601 format)
 
-#/login
+# /login
 POST
 Request JSON body contains:
     - *login (string)
@@ -19,7 +19,7 @@ Response JSON body contains:
     - expires (datetime string in ISO8601 format)
 
 
-#/search
+# /search
 POST
 JSON body contains:
     - from (string)
@@ -29,12 +29,12 @@ Headers contain:
     - *token (string)
 
 
-#/directions
+# /directions
 GET
 Headers contain:
     - *token (string)
 
-#/departures
+# /departures
 GET
 Headers contain:
     - *token (string)
