@@ -1,6 +1,8 @@
 package mongo
 
 import (
+	"time"
+
 	"github.com/RailwayTickets/backend-go/entity"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -16,9 +18,11 @@ func (ticket) Search(params *entity.TicketSearchParams) ([]entity.Ticket, error)
 	if params.To != "" {
 		query["to"] = params.To
 	}
-	if !params.Date.IsZero() {
+	departure := time.Time(params.Date)
+	if !departure.IsZero() {
 		query["departure"] = bson.M{
-			"$gte": params.Date,
+			"$gte": departure,
+			"$lte": departure.Add(time.Hour * 24),
 		}
 	}
 	err := tickets.Find(query).All(&found)

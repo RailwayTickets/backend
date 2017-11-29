@@ -1,8 +1,13 @@
 package entity
 
-import "time"
+import (
+	"strings"
+	"time"
+)
 
 type (
+	DepartureDay time.Time
+
 	Ticket struct {
 		From      string    `json:"from"`
 		To        string    `json:"to"`
@@ -12,9 +17,9 @@ type (
 	}
 
 	TicketSearchParams struct {
-		From string    `json:"from"`
-		To   string    `json:"to"`
-		Date time.Time `json:"date"`
+		From string       `json:"from"`
+		To   string       `json:"to"`
+		Date DepartureDay `json:"date"`
 	}
 
 	TicketSearchResult struct {
@@ -25,3 +30,13 @@ type (
 		Locations []string `json:"locations"`
 	}
 )
+
+func (d *DepartureDay) UnmarshalJSON(data []byte) error {
+	if string(data) == `"null"` {
+		return nil
+	}
+	stringDate := strings.Trim(string(data), `"`)
+	parsed, err := time.Parse("2006-01-02", stringDate)
+	*d = DepartureDay(parsed)
+	return err
+}
