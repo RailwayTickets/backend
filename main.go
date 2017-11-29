@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-
 	"os"
 
 	"github.com/RailwayTickets/backend-go/controller"
@@ -21,6 +20,17 @@ func main() {
 	http.Handle("/login", h.Chain(http.HandlerFunc(loginHandler),
 		h.SetContentTypeJSON,
 		h.RequiredPost))
+	http.Handle("/search", h.Chain(http.HandlerFunc(searchHandler),
+		h.CheckAndUpdateToken,
+		h.SetContentTypeJSON,
+		h.RequiredPost))
+	http.Handle("/directions", h.Chain(http.HandlerFunc(allDirectionsHandler),
+		h.CheckAndUpdateToken,
+		h.SetContentTypeJSON))
+	http.Handle("/departures", h.Chain(http.HandlerFunc(allDeparturesHandler),
+		h.CheckAndUpdateToken,
+		h.SetContentTypeJSON))
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
@@ -64,6 +74,39 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	json.NewEncoder(w).Encode(creds)
+}
+
+func searchHandler(w http.ResponseWriter, r *http.Request) {
+	query := new(entity.TicketSearchParams)
+	err := json.NewDecoder(r.Body).Decode(query)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	tickets, err := controller.Search(query)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	json.NewEncoder(w).Encode(tickets)
+}
+
+func allDirectionsHandler(w http.ResponseWriter, r *http.Request) {
+	directions, err := controller.GetDirections()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	json.NewEncoder(w).Encode(directions)
+}
+
+func allDeparturesHandler(w http.ResponseWriter, r *http.Request) {
+	departures, err := controller.GetDepartures()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	json.NewEncoder(w).Encode(departures)
 }
 
 func hello(w http.ResponseWriter, r *http.Request) {

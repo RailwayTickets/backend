@@ -19,7 +19,6 @@ func TestNew(t *testing.T) {
 func TestInsertAndRemoveToken(t *testing.T) {
 	tokenInfo := &entity.TokenInfo{
 		Token: "TestInsertAndRemoveToken",
-		Login: "asas",
 	}
 	mc, _ := newTokenController()
 	assert.NoError(t, mc.Insert(tokenInfo))
@@ -29,21 +28,18 @@ func TestInsertAndRemoveToken(t *testing.T) {
 func TestGetInfoByToken(t *testing.T) {
 	tokenInfo := &entity.TokenInfo{
 		Token: "TestGetInfoByToken",
-		Login: "asas",
 	}
 	mc, _ := newTokenController()
 	mc.Insert(tokenInfo)
 	ti, err := mc.GetInfo(tokenInfo.Token)
 	assert.NoError(t, err)
 	assert.Equal(t, ti.Token, tokenInfo.Token)
-	assert.Equal(t, ti.Login, tokenInfo.Login)
 	assert.NoError(t, mc.Remove(tokenInfo.Token))
 }
 
 func TestUpdateTokenTTL(t *testing.T) {
 	tokenInfo := &entity.TokenInfo{
 		Token: "TestUpdateTokenTTL",
-		Login: "asas",
 	}
 	mc, _ := newTokenController()
 	assert.NoError(t, mc.Insert(tokenInfo))
