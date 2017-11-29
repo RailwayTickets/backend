@@ -2,9 +2,8 @@ package controller
 
 import (
 	"log"
-	"time"
-
 	"os"
+	"time"
 
 	"github.com/RailwayTickets/backend-go/entity"
 	"github.com/RailwayTickets/backend-go/mongo"

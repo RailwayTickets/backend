@@ -20,4 +20,8 @@ type (
 	TicketSearchResult struct {
 		Tickets []Ticket `json:"tickets"`
 	}
+
+	AvailableLocations struct {
+		Locations []string `json:"locations"`
+	}
 )

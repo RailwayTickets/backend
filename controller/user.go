@@ -25,7 +25,6 @@ func Register(info *entity.RegistrationInfo) (*entity.LoginCredentials, error) {
 	creds := &entity.LoginCredentials{
 		TokenInfo: entity.TokenInfo{
 			Token: string(token),
-			Login: user.Login,
 		},
 	}
 	return creds, Token.Insert(&creds.TokenInfo)
@@ -47,7 +46,6 @@ func Login(info *entity.LoginInfo) (*entity.LoginCredentials, error) {
 	creds := &entity.LoginCredentials{
 		TokenInfo: entity.TokenInfo{
 			Token: string(token),
-			Login: user.Login,
 		},
 	}
 	return creds, Token.Insert(&creds.TokenInfo)
