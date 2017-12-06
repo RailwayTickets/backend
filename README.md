@@ -37,7 +37,7 @@ Response JSON body contains:
     - departure : datetime string in ISO8601 format
     - carriage : int
     - seat : int
-    - type: string
+    - type: string (reserved or compartment)
 
 # /buy GET
 Headers contain:
