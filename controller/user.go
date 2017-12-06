@@ -1,36 +1,35 @@
 package controller
 
 import (
-	"time"
-
-	"fmt"
-
 	"errors"
+	"fmt"
+	"time"
 
 	"github.com/RailwayTickets/backend-go/entity"
 	"github.com/RailwayTickets/backend-go/mongo"
 	"golang.org/x/crypto/bcrypt"
 )
 
-func Register(info *entity.RegistrationInfo) (*entity.LoginCredentials, error) {
+func Register(info *entity.RegistrationInfo) (*entity.TokenInfo, error) {
 	passwordHash, _ := bcrypt.GenerateFromPassword([]byte(info.Password), bcrypt.DefaultCost)
 	user := &entity.User{
-		Login:    info.Login,
-		Password: string(passwordHash),
+		LoginInfo: entity.LoginInfo{
+			Login:    info.Login,
+			Password: string(passwordHash),
+		},
 	}
 	if err := mongo.User.Add(user); err != nil {
 		return nil, err
 	}
 	token, _ := bcrypt.GenerateFromPassword([]byte(time.Now().String()), bcrypt.DefaultCost)
-	creds := &entity.LoginCredentials{
-		TokenInfo: entity.TokenInfo{
-			Token: string(token),
-		},
+	creds := &entity.TokenInfo{
+		Token: string(token),
+		Login: info.Login,
 	}
-	return creds, Token.Insert(&creds.TokenInfo)
+	return creds, Token.Insert(creds)
 }
 
-func Login(info *entity.LoginInfo) (*entity.LoginCredentials, error) {
+func Login(info *entity.LoginInfo) (*entity.TokenInfo, error) {
 	user, err := mongo.User.ByLogin(info.Login)
 	if err != nil {
 		return nil, fmt.Errorf("could not fetch user: %s", err)
@@ -43,10 +42,17 @@ func Login(info *entity.LoginInfo) (*entity.LoginCredentials, error) {
 		return nil, fmt.Errorf("could not check password: %s", err)
 	}
 	token, _ := bcrypt.GenerateFromPassword([]byte(time.Now().String()), bcrypt.DefaultCost)
-	creds := &entity.LoginCredentials{
-		TokenInfo: entity.TokenInfo{
-			Token: string(token),
-		},
+	creds := &entity.TokenInfo{
+		Token: string(token),
+		Login: info.Login,
 	}
-	return creds, Token.Insert(&creds.TokenInfo)
+	return creds, Token.Insert(creds)
+}
+
+func UpdateProfile(login string, profile *entity.User) error {
+	return mongo.User.Update(login, profile)
+}
+
+func GetProfile(login string) (*entity.User, error) {
+	return mongo.User.ByLogin(login)
 }

@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -13,7 +12,6 @@ import (
 )
 
 func main() {
-	http.HandleFunc("/", hello)
 	http.Handle("/register", h.Chain(http.HandlerFunc(registerHandler),
 		h.SetContentTypeJSON,
 		h.RequiredPost))
@@ -28,6 +26,9 @@ func main() {
 		h.CheckAndUpdateToken,
 		h.SetContentTypeJSON))
 	http.Handle("/departures", h.Chain(http.HandlerFunc(allDeparturesHandler),
+		h.CheckAndUpdateToken,
+		h.SetContentTypeJSON))
+	http.Handle("/profile", h.Chain(http.HandlerFunc(profileHandler),
 		h.CheckAndUpdateToken,
 		h.SetContentTypeJSON))
 
@@ -109,6 +110,38 @@ func allDeparturesHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(departures)
 }
 
-func hello(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Hello World")
+func profileHandler(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodPost:
+		updateProfileHandler(w, r)
+	case http.MethodGet:
+		getProfileHandler(w, r)
+	default:
+		w.WriteHeader(http.StatusMethodNotAllowed)
+	}
+}
+
+func updateProfileHandler(w http.ResponseWriter, r *http.Request) {
+	user := new(entity.User)
+	err := json.NewDecoder(r.Body).Decode(user)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	ctx := r.Context()
+	err = controller.UpdateProfile(ctx.Value(h.LoginKey).(string), user)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func getProfileHandler(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	profile, err := controller.GetProfile(ctx.Value(h.LoginKey).(string))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	json.NewEncoder(w).Encode(profile)
 }

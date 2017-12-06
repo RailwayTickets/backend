@@ -8,6 +8,7 @@ import (
 // TokenInfo holds information about user and his token
 type TokenInfo struct {
 	Token   string    `bson:"token" json:"token"`
+	Login   string    `bson:"login" json:"-"`
 	Expires time.Time `bson:"expires" json:"expires"`
 }
 

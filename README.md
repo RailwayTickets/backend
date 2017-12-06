@@ -53,3 +53,27 @@ Headers contain:
 Response JSON body contains:
  - locations : array of strings
 
+# /profile GET
+Headers contain:
+ - *token : string
+
+Response JSON body contains:
+ - first_name: string
+ - last_name: string
+ - phone: string
+ - email: string
+ - doc_type: string
+ - doc_number: string
+
+# /profile POST
+Headers contain:
+ - *token : string
+
+Request JSON body contains:
+ - first_name: string
+ - last_name: string
+ - phone: string
+ - email: string
+ - doc_type: string
+ - doc_number: string
+

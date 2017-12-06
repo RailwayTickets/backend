@@ -6,6 +6,8 @@ import (
 	"path"
 	"strings"
 
+	"context"
+
 	"github.com/RailwayTickets/backend-go/controller"
 )
 
@@ -14,6 +16,7 @@ type Middleware func(http.Handler) http.Handler
 
 const (
 	tokenHeaderName = "token"
+	LoginKey        = "login"
 )
 
 // AllowCORS is a wrapper that adds 'Access-Control-Allow' headers in response
@@ -69,7 +72,9 @@ func CheckAndUpdateToken(handler http.Handler) http.Handler {
 			return
 		}
 		controller.Token.UpdateTTL(ti)
-		handler.ServeHTTP(w, r)
+		ctx := r.Context()
+		ctx = context.WithValue(ctx, LoginKey, ti.Login)
+		handler.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 
