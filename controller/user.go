@@ -56,3 +56,8 @@ func UpdateProfile(login string, profile *entity.User) error {
 func GetProfile(login string) (*entity.User, error) {
 	return mongo.User.ByLogin(login)
 }
+
+func GetMyTickets(login string) (entity.TicketSearchResult, error) {
+	tickets, err := mongo.Tickets.ForUser(login)
+	return entity.TicketSearchResult{tickets}, err
+}

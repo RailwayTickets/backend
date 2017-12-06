@@ -3,17 +3,22 @@ package entity
 import (
 	"strings"
 	"time"
+
+	"gopkg.in/mgo.v2/bson"
 )
 
 type (
 	DepartureDay time.Time
 
 	Ticket struct {
-		From      string    `json:"from"`
-		To        string    `json:"to"`
-		Departure time.Time `json:"departure"`
-		Carriage  int       `json:"carriage"`
-		Seat      int       `json:"seat"`
+		ID        bson.ObjectId `bson:"_id" json:"id"`
+		From      string        `bson:"from" json:"from"`
+		To        string        `bson:"to" json:"to"`
+		Departure time.Time     `bson:"departure" json:"departure"`
+		Carriage  int           `bson:"carriage" json:"carriage"`
+		Seat      int           `bson:"seat" json:"seat"`
+		Type      string        `bson:"type" json:"type"`
+		Owner     string        `bson:"owner" json:"-"`
 	}
 
 	TicketSearchParams struct {

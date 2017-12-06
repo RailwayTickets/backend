@@ -11,7 +11,9 @@ type ticket struct{}
 
 func (ticket) Search(params *entity.TicketSearchParams) ([]entity.Ticket, error) {
 	var found []entity.Ticket
-	query := bson.M{}
+	query := bson.M{
+		"owner": nil,
+	}
 	if params.From != "" {
 		query["from"] = params.From
 	}
@@ -47,4 +49,28 @@ func (ticket) AllDepartures() ([]string, error) {
 	var departures []string
 	err := tickets.Find(nil).Distinct("from", &departures)
 	return departures, err
+}
+
+func (ticket) Buy(login, id string) error {
+	err := tickets.Update(
+		bson.M{
+			"_id":   bson.ObjectIdHex(id),
+			"owner": nil,
+		},
+		bson.M{
+			"$set": bson.M{
+				"owner": login,
+			},
+		},
+	)
+	return err
+}
+
+func (ticket) ForUser(login string) ([]entity.Ticket, error) {
+	var found []entity.Ticket
+	query := bson.M{
+		"owner": login,
+	}
+	err := tickets.Find(query).All(&found)
+	return found, err
 }

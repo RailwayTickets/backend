@@ -22,6 +22,9 @@ func main() {
 		h.CheckAndUpdateToken,
 		h.SetContentTypeJSON,
 		h.RequiredPost))
+	http.Handle("/buy", h.Chain(http.HandlerFunc(buyHandler),
+		h.CheckAndUpdateToken,
+		h.SetContentTypeJSON))
 	http.Handle("/directions", h.Chain(http.HandlerFunc(allDirectionsHandler),
 		h.CheckAndUpdateToken,
 		h.SetContentTypeJSON))
@@ -29,6 +32,9 @@ func main() {
 		h.CheckAndUpdateToken,
 		h.SetContentTypeJSON))
 	http.Handle("/profile", h.Chain(http.HandlerFunc(profileHandler),
+		h.CheckAndUpdateToken,
+		h.SetContentTypeJSON))
+	http.Handle("/profile/tickets", h.Chain(http.HandlerFunc(myTicketsHandler),
 		h.CheckAndUpdateToken,
 		h.SetContentTypeJSON))
 
@@ -92,6 +98,20 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(tickets)
 }
 
+func buyHandler(w http.ResponseWriter, r *http.Request) {
+	ticketID := r.URL.Query().Get("id")
+	ctx := r.Context()
+	err := controller.Buy(ctx.Value(h.LoginKey).(string), ticketID)
+	if err == controller.AlreadyTaken {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
 func allDirectionsHandler(w http.ResponseWriter, r *http.Request) {
 	directions, err := controller.GetDirections()
 	if err != nil {
@@ -144,4 +164,14 @@ func getProfileHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	json.NewEncoder(w).Encode(profile)
+}
+
+func myTicketsHandler(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	tickets, err := controller.GetMyTickets(ctx.Value(h.LoginKey).(string))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	json.NewEncoder(w).Encode(tickets)
 }

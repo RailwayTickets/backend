@@ -20,7 +20,6 @@ Response JSON body contains:
  - token : string
  - expires : datetime string in ISO8601 format
 
-
 # /search POST
 JSON body contains:
  - from : string
@@ -32,12 +31,20 @@ Headers contain:
 
 Response JSON body contains:
  - tickets : array of objects, each of which contains the following fields
+    - id: string
     - from : string
     - to : string
     - departure : datetime string in ISO8601 format
     - carriage : int
     - seat : int
+    - type: string
 
+# /buy GET
+Headers contain:
+ - *token : string
+
+URL params must contain:
+ - id: string
 
 # /directions GET
 Headers contain:
@@ -77,3 +84,17 @@ Request JSON body contains:
  - doc_type: string
  - doc_number: string
 
+
+# /profile/tickets GET 
+Headers contain:
+ - *token : string
+
+Response JSON body contains:
+ - tickets : array of objects, each of which contains the following fields
+    - id: string
+    - from : string
+    - to : string
+    - departure : datetime string in ISO8601 format
+    - carriage : int
+    - seat : int
+    - type: string
