@@ -25,6 +25,9 @@ func main() {
 	http.Handle("/buy", h.Chain(http.HandlerFunc(buyHandler),
 		h.CheckAndUpdateToken,
 		h.SetContentTypeJSON))
+	http.Handle("/return", h.Chain(http.HandlerFunc(returnHandler),
+		h.CheckAndUpdateToken,
+		h.SetContentTypeJSON))
 	http.Handle("/directions", h.Chain(http.HandlerFunc(allDirectionsHandler),
 		h.CheckAndUpdateToken,
 		h.SetContentTypeJSON))
@@ -103,6 +106,20 @@ func buyHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	err := controller.Buy(ctx.Value(h.LoginKey).(string), ticketID)
 	if err == controller.AlreadyTaken {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func returnHandler(w http.ResponseWriter, r *http.Request) {
+	ticketID := r.URL.Query().Get("id")
+	ctx := r.Context()
+	err := controller.Return(ctx.Value(h.LoginKey).(string), ticketID)
+	if err == controller.AlreadyIssued || err == controller.NotYourTicket {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}

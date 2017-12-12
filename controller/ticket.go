@@ -3,12 +3,18 @@ package controller
 import (
 	"errors"
 
+	"time"
+
 	"github.com/RailwayTickets/backend-go/entity"
 	"github.com/RailwayTickets/backend-go/mongo"
 	"gopkg.in/mgo.v2"
 )
 
-var AlreadyTaken = errors.New("ticket is already taken")
+var (
+	AlreadyTaken  = errors.New("ticket is already taken")
+	NotYourTicket = errors.New("ticket is not yours")
+	AlreadyIssued = errors.New("return of issued ticket is forbidden")
+)
 
 func Search(query *entity.TicketSearchParams) (entity.TicketSearchResult, error) {
 	tickets, err := mongo.Tickets.Search(query)
@@ -21,6 +27,20 @@ func Buy(login, ticketID string) error {
 		return AlreadyTaken
 	}
 	return err
+}
+
+func Return(login, ticketID string) error {
+	ticket, err := mongo.Tickets.ByID(ticketID)
+	if err != nil {
+		return err
+	}
+	if ticket.Owner != login {
+		return NotYourTicket
+	}
+	if ticket.Departure.Before(time.Now()) {
+		return AlreadyIssued
+	}
+	return mongo.Tickets.Return(login, ticketID)
 }
 
 func GetDirections() (entity.AvailableLocations, error) {

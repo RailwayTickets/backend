@@ -44,7 +44,14 @@ Headers contain:
  - *token : string
 
 URL params must contain:
- - id: string
+ - id: string - id of chosen ticket to buy
+
+# /return GET
+Headers contain:
+ - *token : string
+
+URL params must contain:
+ - id: string - id of ticket to return
 
 # /directions GET
 Headers contain:

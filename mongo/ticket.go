@@ -66,6 +66,29 @@ func (ticket) Buy(login, id string) error {
 	return err
 }
 
+func (ticket) ByID(id string) (*entity.Ticket, error) {
+	t := new(entity.Ticket)
+	err := tickets.Find(bson.M{
+		"_id": bson.ObjectIdHex(id),
+	}).One(t)
+	return t, err
+}
+
+func (ticket) Return(login, id string) error {
+	err := tickets.Update(
+		bson.M{
+			"_id":   bson.ObjectIdHex(id),
+			"owner": login,
+		},
+		bson.M{
+			"$set": bson.M{
+				"owner": nil,
+			},
+		},
+	)
+	return err
+}
+
 func (ticket) ForUser(login string) ([]entity.Ticket, error) {
 	var found []entity.Ticket
 	query := bson.M{
