@@ -97,3 +97,15 @@ func (ticket) ForUser(login string) ([]entity.Ticket, error) {
 	err := tickets.Find(query).All(&found)
 	return found, err
 }
+
+func (ticket) ValidReturnForUser(login string) ([]entity.Ticket, error) {
+	var found []entity.Ticket
+	query := bson.M{
+		"owner": login,
+		"departure": bson.M{
+			"$gt": bson.Now(),
+		},
+	}
+	err := tickets.Find(query).All(&found)
+	return found, err
+}

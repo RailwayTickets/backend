@@ -28,6 +28,9 @@ func main() {
 	http.Handle("/return", h.Chain(http.HandlerFunc(returnHandler),
 		h.CheckAndUpdateToken,
 		h.SetContentTypeJSON))
+	http.Handle("/return/valid", h.Chain(http.HandlerFunc(validReturnHandler),
+		h.CheckAndUpdateToken,
+		h.SetContentTypeJSON))
 	http.Handle("/directions", h.Chain(http.HandlerFunc(allDirectionsHandler),
 		h.CheckAndUpdateToken,
 		h.SetContentTypeJSON))
@@ -127,6 +130,16 @@ func returnHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+}
+
+func validReturnHandler(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	tickets, err := controller.ValidReturn(ctx.Value(h.LoginKey).(string))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	json.NewEncoder(w).Encode(tickets)
 }
 
 func allDirectionsHandler(w http.ResponseWriter, r *http.Request) {

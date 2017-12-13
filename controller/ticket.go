@@ -42,6 +42,10 @@ func Return(login, ticketID string) error {
 	}
 	return mongo.Tickets.Return(login, ticketID)
 }
+func ValidReturn(login string) (entity.TicketSearchResult, error) {
+	tickets, err := mongo.Tickets.ValidReturnForUser(login)
+	return entity.TicketSearchResult{tickets}, err
+}
 
 func GetDirections() (entity.AvailableLocations, error) {
 	locations, err := mongo.Tickets.AllDirections()

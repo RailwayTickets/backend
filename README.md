@@ -53,6 +53,20 @@ Headers contain:
 URL params must contain:
  - id: string - id of ticket to return
 
+# /return/valid GET
+Headers contain:
+ - *token : string
+
+Response JSON body contains:
+ - tickets : array of objects, each of which contains the following fields
+    - id: string
+    - from : string
+    - to : string
+    - departure : datetime string in ISO8601 format
+    - carriage : int
+    - seat : int
+    - type: string
+
 # /directions GET
 Headers contain:
  - *token : string
